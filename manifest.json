@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.ilyazar.update-channel",
+  "name": "Update Channel",
+  "version": "0.1.0",
+  "author": "ilyaZar",
+  "license": "MIT",
+  "description": "Run Omarchy updates, switch channels, and control update-icon visibility.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "UpdateChannel.qml"
+  },
+  "barWidget": {
+    "displayName": "Update Channel",
+    "description": "Run updates and manage the Omarchy package channel.",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "assumeYes": false,
+      "pulseColor": "#a77bd8",
+      "visibilityMode": "updates"
+    }
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.system-update"
+  }
+}
