@@ -51,6 +51,9 @@ assert.equal(model.normalizeVisibility("updates"), "updates")
 assert.equal(model.normalizeVisibility("hidden"), "hidden")
 assert.equal(model.normalizeVisibility("always"), "always")
 assert.equal(model.normalizeVisibility("invalid"), "updates")
+assert.equal(model.normalizePersistentVisibility("updates"), "updates")
+assert.equal(model.normalizePersistentVisibility("always"), "always")
+assert.equal(model.normalizePersistentVisibility("hidden"), "updates")
 
 assert.equal(model.isHexColor("#a77bd8"), true)
 assert.equal(model.isHexColor("a77bd8"), false)
@@ -64,5 +67,46 @@ assert.equal(
   model.presetForColor("#123456", [{ value: "#a77bd8" }], "#ffffff"),
   "custom"
 )
+
+assert.equal(model.updateCommand(false), "omarchy update")
+assert.equal(model.updateCommand(true), "omarchy update -y")
+assert.equal(model.channelCommand("edge"), "omarchy channel set edge")
+assert.equal(model.channelCommand("invalid"), "")
+
+const settings = model.normalizeSettings(
+  {
+    assumeYes: true,
+    pulseColor: "#A77BD8",
+    visibilityMode: "hidden"
+  },
+  "always",
+  "#ffffff"
+)
+assert.equal(settings.assumeYes, true)
+assert.equal(settings.pulseColor, "#a77bd8")
+assert.equal(settings.visibilityMode, "always")
+assert.equal(settings.hideRequested, true)
+
+const invalidSettings = model.normalizeSettings(
+  {
+    assumeYes: "true",
+    pulseColor: "invalid",
+    visibilityMode: "invalid"
+  },
+  "always",
+  "#a77bd8"
+)
+assert.equal(invalidSettings.assumeYes, false)
+assert.equal(invalidSettings.pulseColor, "#a77bd8")
+assert.equal(invalidSettings.visibilityMode, "updates")
+assert.equal(invalidSettings.hideRequested, false)
+
+const staleHiddenSetting = model.normalizeSettings(
+  { visibilityMode: "hidden" },
+  "hidden",
+  "#a77bd8"
+)
+assert.equal(staleHiddenSetting.visibilityMode, "updates")
+assert.equal(staleHiddenSetting.hideRequested, true)
 
 console.log("[ok] update channel model")

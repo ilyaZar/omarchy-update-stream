@@ -51,6 +51,11 @@ function normalizeVisibility(value) {
     : "updates"
 }
 
+function normalizePersistentVisibility(value) {
+  var mode = normalizeVisibility(value)
+  return mode === "hidden" ? "updates" : mode
+}
+
 function isHexColor(value) {
   return /^#[0-9a-fA-F]{6}$/.test(String(value || "").trim())
 }
@@ -67,4 +72,32 @@ function presetForColor(value, presets, fallback) {
     if (String(presets[index].value).toLowerCase() === color) return color
   }
   return "custom"
+}
+
+function updateCommand(assumeYes) {
+  return assumeYes === true ? "omarchy update -y" : "omarchy update"
+}
+
+function channelCommand(channel) {
+  var normalized = normalizeChannel(channel)
+  return normalized === "unknown" ? "" : "omarchy channel set " + normalized
+}
+
+function normalizeSettings(
+  values,
+  currentVisibility,
+  fallbackColor
+) {
+  var source = values || {}
+  var requestedVisibility = normalizeVisibility(source.visibilityMode)
+  var persistedVisibility = requestedVisibility === "hidden"
+    ? normalizePersistentVisibility(currentVisibility)
+    : requestedVisibility
+
+  return {
+    assumeYes: source.assumeYes === true,
+    pulseColor: normalizeColor(source.pulseColor, fallbackColor),
+    visibilityMode: persistedVisibility,
+    hideRequested: requestedVisibility === "hidden"
+  }
 }
