@@ -93,6 +93,19 @@ node ./tests/test_model.mjs
 omarchy plugin validate "$PWD"
 ```
 
+## Architecture
+
+- `UpdateChannel.qml` coordinates settings, actions, IPC, and child components.
+- `UpdateChannelService.qml` owns polling and all `omarchy` query processes.
+- `UpdateChannelButton.qml` owns bar-icon rendering and pulse feedback.
+- `UpdateChannelPanel.qml` connects the main and settings pages with explicit
+  action signals.
+- `UpdateChannelModel.js` contains pure normalization, command, and URL helpers
+  covered by the model test.
+
+The page components own draft UI state. They request actions through signals;
+they do not launch commands, write settings, or reach into the root widget.
+
 ## Remove
 
 ```bash
